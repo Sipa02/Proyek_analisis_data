@@ -33,24 +33,7 @@ def create_bycity_df(df):
 
 all_df = pd.read_csv('data.csv')
 
-# datetime_column = ["order_purchase_timestamp"]
-# all_df.sort_values(by="order_purchase_timestamp", inplace=True)
-# all_df.reset_index(inplace=True)
-
-# for column in datetime_column:
-#   all_df[column] = pd.to_datetime(all_df[column])
-
-# min_month = all_df["order_purchase_timestamp"].min()
-# max_month = all_df["order_purchase_timestamp"].max()
-
-# start_month, end_month = st.date_input(
-#     label='Rentang Waktu', min_value=min_month, max_value=max_month, value=[min_month, max_month]
-# )
-
-# main_df = all_df[(all_df["order_purchase_timestamp"] >= str(start_month)) & (all_df["order_purchase_timestamp"] <= str(end_month))]
-
 monthly_orders_df = create_monthly_orders_df(all_df)
-
 bycity_df = create_bycity_df(all_df)
 
 st.subheader('Number of Orders Last 3 Months')
