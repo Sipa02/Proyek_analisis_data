@@ -54,7 +54,7 @@ monthly_orders_df = create_monthly_orders_df(main_df)
 
 bycity_df = create_bycity_df(main_df)
 
-st.subheader('Orders Last 3 Months')
+st.subheader('Number of Orders Last 3 Months')
 
 col1, col2 = st.columns(2)
 
