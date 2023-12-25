@@ -32,7 +32,7 @@ def create_bycity_df(df):
     bycity_df.rename(columns={"customer_id": "customer_count", "customer_city": "city"}, inplace=True)
     return bycity_df
 
-all_df = pd.read_csv('/content/data.csv')
+all_df = pd.read_csv('data.csv')
 
 datetime_column = ["order_purchase_timestamp"]
 all_df.sort_values(by="order_purchase_timestamp", inplace=True)
