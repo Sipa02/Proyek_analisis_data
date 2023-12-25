@@ -16,16 +16,15 @@ sns.set(style='dark')
 st.header('Analisa Data E-Commerce')
 
 def create_monthly_orders_df(df):
-  monthly_orders_df = df.resample(rule='M', on='order_purchase_timestamp').agg({
-      "order_id" : "nunique"
+    monthly_orders_df = df.resample(rule='M', on='order_purchase_timestamp').agg({
+        "order_id": "nunique"
+    })
+    monthly_orders_df = monthly_orders_df.reset_index()
+    monthly_orders_df.rename(columns={
+        "order_id": "order_count"
+    }, inplace=True)
 
-  })
-  monthly_orders_df = monthly_orders_df.reset_index()
-  monthly_orders_df.rename(columns={
-      "order_id": "order_count"
-  }, inplace = True)
-
-  return monthly_orders_df
+    return monthly_orders_df
 
 def create_bycity_df(df):
     bycity_df = df.groupby(by="customer_city").customer_id.nunique().reset_index()
@@ -41,18 +40,18 @@ all_df = pd.read_csv('data.csv')
 # for column in datetime_column:
 #   all_df[column] = pd.to_datetime(all_df[column])
 
-min_month = all_df["order_purchase_timestamp"].min()
-max_month = all_df["order_purchase_timestamp"].max()
+# min_month = all_df["order_purchase_timestamp"].min()
+# max_month = all_df["order_purchase_timestamp"].max()
 
 # start_month, end_month = st.date_input(
-#     label = 'Rentang Waktu', min_value=min_month, max_value=max_month, value = [min_month, max_month]
+#     label='Rentang Waktu', min_value=min_month, max_value=max_month, value=[min_month, max_month]
 # )
 
-main_df = all_df[(all_df["order_purchase_timestamp"] >= str(start_month)) & (all_df["order_purchase_timestamp"] <= str(end_month))]
+# main_df = all_df[(all_df["order_purchase_timestamp"] >= str(start_month)) & (all_df["order_purchase_timestamp"] <= str(end_month))]
 
-monthly_orders_df = create_monthly_orders_df(main_df)
+monthly_orders_df = create_monthly_orders_df(all_df)
 
-bycity_df = create_bycity_df(main_df)
+bycity_df = create_bycity_df(all_df)
 
 st.subheader('Number of Orders Last 3 Months')
 
@@ -63,13 +62,14 @@ with col1:
     st.metric("Total orders", value=total_orders, delta=None)
 
 with col2:
-
-    percentage_change = ((monthly_orders_df.order_count.iloc[-1] - monthly_orders_df.order_count.iloc[0]) / monthly_orders_df.order_count.iloc[0]) * 100
+    percentage_change = (
+            (monthly_orders_df.order_count.iloc[-1] - monthly_orders_df.order_count.iloc[0]) /
+            monthly_orders_df.order_count.iloc[0]) * 100
     st.metric("Percentage Change", value=percentage_change, delta=None)
 
 fig, ax = plt.subplots(figsize=(16, 8))
 ax.plot(
-    monthly_orders_df["order_purchase_timestamp"],
+    range(len(monthly_orders_df)),
     monthly_orders_df["order_count"],
     marker='o',
     linewidth=2,
@@ -96,7 +96,7 @@ sns.barplot(x="customer_count",
             data=top_cities_df,
             palette=colors,
             ax=ax
-)
+            )
 ax.set_title("Number of Customer in Top 5 Cities", loc="center", fontsize=30)
 ax.set_ylabel('City')
 ax.set_xlabel('')
