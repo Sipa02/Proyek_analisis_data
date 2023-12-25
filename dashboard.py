@@ -7,26 +7,30 @@ Original file is located at
     https://colab.research.google.com/drive/1796DU3G7BHXk9awlnOFBbRkfPr41GUtq
 """
 
+# !pip install streamlit babel
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
 from babel.numbers import format_currency
+
 sns.set(style='dark')
 st.header('Analisa Data E-Commerce')
 
 def create_monthly_orders_df(df):
-    # Konversi 'order_purchase_timestamp' menjadi datetime index
+    # Convert the index to DatetimeIndex
     df['order_purchase_timestamp'] = pd.to_datetime(df['order_purchase_timestamp'])
-    df.set_index('order_purchase_timestamp', inplace=True)
-    
-    # Buat DataFrame bulanan
+    df = df.set_index('order_purchase_timestamp')
+
+    # Resample by month and calculate the number of unique orders
     monthly_orders_df = df.resample(rule='M').agg({
         "order_id": "nunique"
     })
-    monthly_orders_df.rename(columns={
-        "order_id": "order_count"
-    }, inplace=True)
+
+    # Reset the index and rename the columns
+    monthly_orders_df = monthly_orders_df.reset_index()
+    monthly_orders_df.rename(columns={"order_id": "order_count"}, inplace=True)
 
     return monthly_orders_df
 
@@ -37,27 +41,44 @@ def create_bycity_df(df):
 
 all_df = pd.read_csv('data.csv')
 
-monthly_orders_df = create_monthly_orders_df(all_df)
+from datetime import datetime, timedelta
+all_df['order_purchase_timestamp'] = pd.to_datetime(all_df['order_purchase_timestamp'])
+
+end_date = max(all_df['order_purchase_timestamp'])
+start_date = end_date - timedelta(days=90)
+
+filtered_orders_last_3_months = all_df[(all_df['order_purchase_timestamp'] >= start_date) & (all_df['order_purchase_timestamp'] <= end_date)]
+
+# monthly_orders_df = create_monthly_orders_df(all_df)
+# last_3_months = monthly_orders_df.tail(3)
 bycity_df = create_bycity_df(all_df)
 
-st.subheader('Number of Orders Last 3 Months')
+# Tampilkan subheader
+st.subheader('Number of Orders Comparison: Last 3 Months vs Previous 3 Months')
 
-col1, col2 = st.columns(2)
+# Pisahkan layout menjadi 3 kolom
+col1, col2, col3 = st.columns(3)
 
+# Kolom pertama: Total pesanan 3 bulan sebelumnya
 with col1:
-    total_orders = monthly_orders_df.order_count.sum()
-    st.metric("Total orders", value=total_orders, delta=None)
+    total_orders_previous_3_months = len(all_df[(all_df['order_purchase_timestamp'] < start_date)])
+    st.metric("Total orders (Previous 3 Months)", value=total_orders_previous_3_months, delta=None)
 
+# Kolom kedua: Total pesanan 3 bulan terakhir
 with col2:
-    percentage_change = (
-            (monthly_orders_df.order_count.iloc[-1] - monthly_orders_df.order_count.iloc[0]) /
-            monthly_orders_df.order_count.iloc[0]) * 100
-    st.metric("Percentage Change", value=percentage_change, delta=None)
+    total_orders_last_3_months = len(filtered_orders_last_3_months)
+    st.metric("Total orders (Last 3 Months)", value=total_orders_last_3_months, delta=None)
 
+# Kolom ketiga: Persentase perubahan pesanan
+with col3:
+    percentage_increase = ((total_orders_last_3_months - total_orders_previous_3_months) / total_orders_previous_3_months) * 100
+    st.metric("Percentage Change", value=percentage_increase, delta=None)
+
+# Tampilkan grafik historis pesanan
 fig, ax = plt.subplots(figsize=(16, 8))
 ax.plot(
-    monthly_orders_df.index,
-    monthly_orders_df["order_count"],
+    all_df["order_purchase_timestamp"],
+    all_df["order_id"],
     marker='o',
     linewidth=2,
     color="#87CEEB"
@@ -92,4 +113,3 @@ ax.tick_params(axis='y', labelsize=20)
 ax.tick_params(axis='x', labelsize=15)
 
 st.pyplot(fig)
-
