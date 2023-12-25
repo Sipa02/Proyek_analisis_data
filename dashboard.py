@@ -44,9 +44,9 @@ all_df = pd.read_csv('data.csv')
 min_month = all_df["order_purchase_timestamp"].min()
 max_month = all_df["order_purchase_timestamp"].max()
 
-start_month, end_month = st.date_input(
-    label = 'Rentang Waktu', min_value=min_month, max_value=max_month, value = [min_month, max_month]
-)
+# start_month, end_month = st.date_input(
+#     label = 'Rentang Waktu', min_value=min_month, max_value=max_month, value = [min_month, max_month]
+# )
 
 main_df = all_df[(all_df["order_purchase_timestamp"] >= str(start_month)) & (all_df["order_purchase_timestamp"] <= str(end_month))]
 
@@ -54,7 +54,7 @@ monthly_orders_df = create_monthly_orders_df(main_df)
 
 bycity_df = create_bycity_df(main_df)
 
-st.subheader('Monthly Orders')
+st.subheader('Orders Last 3 Months')
 
 col1, col2 = st.columns(2)
 
