@@ -16,10 +16,14 @@ sns.set(style='dark')
 st.header('Analisa Data E-Commerce')
 
 def create_monthly_orders_df(df):
-    monthly_orders_df = df.resample(rule='M', on='order_purchase_timestamp').agg({
+    # Konversi 'order_purchase_timestamp' menjadi datetime index
+    df['order_purchase_timestamp'] = pd.to_datetime(df['order_purchase_timestamp'])
+    df.set_index('order_purchase_timestamp', inplace=True)
+    
+    # Buat DataFrame bulanan
+    monthly_orders_df = df.resample(rule='M').agg({
         "order_id": "nunique"
     })
-    monthly_orders_df = monthly_orders_df.reset_index()
     monthly_orders_df.rename(columns={
         "order_id": "order_count"
     }, inplace=True)
@@ -52,7 +56,7 @@ with col2:
 
 fig, ax = plt.subplots(figsize=(16, 8))
 ax.plot(
-    range(len(monthly_orders_df)),
+    monthly_orders_df.index,
     monthly_orders_df["order_count"],
     marker='o',
     linewidth=2,
@@ -88,3 +92,4 @@ ax.tick_params(axis='y', labelsize=20)
 ax.tick_params(axis='x', labelsize=15)
 
 st.pyplot(fig)
+
