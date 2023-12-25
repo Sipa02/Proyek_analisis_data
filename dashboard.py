@@ -34,12 +34,12 @@ def create_bycity_df(df):
 
 all_df = pd.read_csv('data.csv')
 
-datetime_column = ["order_purchase_timestamp"]
-all_df.sort_values(by="order_purchase_timestamp", inplace=True)
-all_df.reset_index(inplace=True)
+# datetime_column = ["order_purchase_timestamp"]
+# all_df.sort_values(by="order_purchase_timestamp", inplace=True)
+# all_df.reset_index(inplace=True)
 
-for column in datetime_column:
-  all_df[column] = pd.to_datetime(all_df[column])
+# for column in datetime_column:
+#   all_df[column] = pd.to_datetime(all_df[column])
 
 min_month = all_df["order_purchase_timestamp"].min()
 max_month = all_df["order_purchase_timestamp"].max()
