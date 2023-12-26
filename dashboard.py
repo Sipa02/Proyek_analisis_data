@@ -39,7 +39,7 @@ def create_bycity_df(df):
     bycity_df.rename(columns={"customer_id": "customer_count", "customer_city": "city"}, inplace=True)
     return bycity_df
 
-all_df = pd.read_csv('data.csv')
+all_df = pd.read_csv("https://raw.githubusercontent.com/Sipa02/Proyek_analisis_data/main/Dataset/data.csv")
 
 from datetime import datetime, timedelta
 all_df['order_purchase_timestamp'] = pd.to_datetime(all_df['order_purchase_timestamp'])
@@ -50,7 +50,7 @@ start_date = end_date - timedelta(days=90)
 filtered_orders_last_3_months = all_df[(all_df['order_purchase_timestamp'] >= start_date) & (all_df['order_purchase_timestamp'] <= end_date)]
 
 # monthly_orders_df = create_monthly_orders_df(all_df)
-# last_3_months = monthly_orders_df.tail(3)
+last_3_months_df = all_df[all_df['order_purchase_timestamp'] >= start_date]
 bycity_df = create_bycity_df(all_df)
 
 # Tampilkan subheader
@@ -75,19 +75,27 @@ with col3:
     st.metric("Percentage Change", value=percentage_increase, delta=None)
 
 # Tampilkan grafik historis pesanan
-fig, ax = plt.subplots(figsize=(16, 8))
-ax.plot(
-    all_df["order_purchase_timestamp"],
-    all_df["order_id"],
-    marker='o',
-    linewidth=2,
-    color="#87CEEB"
-)
 
-ax.tick_params(axis='y', labelsize=20)
-ax.tick_params(axis='x', labelsize=15)
+#     all_df["order_purchase_timestamp"],
+#     all_df["order_id"],
+#     marker='o',
+#     linewidth=2,
+#     color="#87CEEB"
+# )
 
-st.pyplot(fig)
+# ax.tick_params(axis='y', labelsize=20)
+# ax.tick_params(axis='x', labelsize=15)
+
+# st.pyplot(fig)
+# st.line_chart(last_3_months_df.set_index('order_purchase_timestamp')['order_id'])
+# st.pyplot(fig)
+chart_data = {
+    'Time Period': ['Last 3 Months', 'Previous 3 Months'],
+    'Order Quantity': [total_orders_last_3_months, total_orders_previous_3_months]
+}
+chart_df = pd.DataFrame(chart_data)
+
+st.bar_chart(chart_df.set_index('Time Period'))
 
 # customer demographic
 st.subheader("Customer Demographics")
