@@ -1,9 +1,21 @@
-# Proyek_analisis_data
+# E-Commerce Public Dashboard
 
-##Setup 
-''pip install streamlit babel, numpy, pandas, plotly, seaborn, streamlit, matplotlib, matplotlib-inline  ''
+## Setup
+```
+conda create --name main-ds python=3.9
+conda activate main-ds
+pip install -r requirements.txt
+```
 
-##Run Streamlit app di Google Colab
-''!pip install streamlit babel
-!wget -q -O - ipv4.icanhazip.com
-! streamlit run dashboard.py & npx localtunnel --port 8501''
+## Setup Environment - Shell/Terminal
+```
+mkdir proyek_analisis_data
+cd proyek_analisis_data
+pipenv install
+pipenv shell
+pip install -r requirements.txt
+```
+
+## Run steamlit app
+```
+streamlit run dashboard.py
