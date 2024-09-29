@@ -3,12 +3,12 @@ import streamlit as st
 import plotly.express as px
 
 # load data
-customers_df = pd.read_csv("customers_clean.csv")
-order_items_df = pd.read_csv("order_items_clean.csv")
-order_payments_df = pd.read_csv("order_payments_clean.csv")
-product_category_df = pd.read_csv("product_category_clean.csv")
-products_df = pd.read_csv("products_clean.csv")
-orders_df = pd.read_csv("order_clean.csv")
+customers_df = pd.read_csv("https://raw.githubusercontent.com/Sipa02/Proyek_analisis_data/main/customers_clean.csv")
+order_items_df = pd.read_csv("https://raw.githubusercontent.com/Sipa02/Proyek_analisis_data/main/order_items_clean.csv")
+order_payments_df = pd.read_csv("https://raw.githubusercontent.com/Sipa02/Proyek_analisis_data/main/order_payments_clean.csv")
+product_category_df = pd.read_csv("https://raw.githubusercontent.com/Sipa02/Proyek_analisis_data/main/product_category_clean.csv")
+products_df = pd.read_csv("https://raw.githubusercontent.com/Sipa02/Proyek_analisis_data/main/products_clean.csv")
+orders_df = pd.read_csv("https://raw.githubusercontent.com/Sipa02/Proyek_analisis_data/main/order_clean.csv")
 
 # merge order_items_df dan products_df berdasarkan product_id
 items_products_df = pd.merge(order_items_df, products_df, on='product_id', how='inner')
